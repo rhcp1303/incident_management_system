@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+    <h1>Login</h1>
+    <form id="loginForm">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit">Login</button>
+        <div id="loginMessage"></div>
+    </form>
+    <script src="script.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const data = {};
+            formData.forEach((value, key) => (data[key] = value));
+
+            fetch('http://127.0.0.1:8000/api/users/login/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messageDiv = document.getElementById('loginMessage');
+                if (data.message === 'Login successful') {
+                    messageDiv.textContent = 'Login successful!';
+                    messageDiv.style.color = 'green';
+                    // In a real application, you would handle session storage here
+                } else if (data.error) {
+                    messageDiv.textContent = `Login failed: ${data.error}`;
+                    messageDiv.style.color = 'red';
+                } else {
+                    messageDiv.textContent = 'Login failed due to an unknown error.';
+                    messageDiv.style.color = 'red';
+                }
+            })
+            .catch(error => {
+                console.error('Error during login:', error);
+                const messageDiv = document.getElementById('loginMessage');
+                messageDiv.textContent = 'Login failed. Please try again later.';
+                messageDiv.style.color = 'red';
+            });
+        });
+    </script>
+</body>
+</html>

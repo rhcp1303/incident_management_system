@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Incidents</title>
+</head>
+<body>
+    <h1>Your Incidents</h1>
+    <div id="incidentsList">
+        <p>Loading incidents...</p>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        function fetchIncidents() {
+            fetch('http://127.0.0.1:8000/api/incidents/', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // **Important:** Authentication handling needed here
+                    // 'Authorization': 'Token YOUR_AUTH_TOKEN'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const incidentsListDiv = document.getElementById('incidentsList');
+                incidentsListDiv.innerHTML = ''; // Clear loading message
+                if (Array.isArray(data) && data.length > 0) {
+                    const ul = document.createElement('ul');
+                    data.forEach(incident => {
+                        const li = document.createElement('li');
+                        li.textContent = `ID: ${incident.incident_id}, Priority: ${incident.priority}, Status: ${incident.status}, Details: ${incident.incident_details.substring(0, 50)}...`;
+                        ul.appendChild(li);
+                    });
+                    incidentsListDiv.appendChild(ul);
+                } else {
+                    incidentsListDiv.textContent = 'No incidents found.';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching incidents:', error);
+                const incidentsListDiv = document.getElementById('incidentsList');
+                incidentsListDiv.textContent = 'Failed to load incidents.';
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchIncidents);
+    </script>
+</body>
+</html>

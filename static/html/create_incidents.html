@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Incident</title>
+</head>
+<body>
+    <h1>Create New Incident</h1>
+    <form id="createIncidentForm">
+        <div>
+            <label for="enterprise_or_government">Organization Type:</label>
+            <select id="enterprise_or_government" name="enterprise_or_government" required>
+                <option value="Enterprise">Enterprise</option>
+                <option value="Government">Government</option>
+            </select>
+        </div>
+        <div>
+            <label for="incident_details">Incident Details:</label>
+            <textarea id="incident_details" name="incident_details" rows="5" required></textarea>
+        </div>
+        <div>
+            <label for="priority">Priority:</label>
+            <select id="priority" name="priority">
+                <option value="High">High</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="Low">Low</option>
+            </select>
+        </div>
+        <button type="submit">Create Incident</button>
+        <div id="createIncidentMessage"></div>
+    </form>
+    <script src="script.js"></script>
+    <script>
+        document.getElementById('createIncidentForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const data = {};
+            formData.forEach((value, key) => (data[key] = value));
+
+            // **Important:** You'll need to handle authentication (e.g., sending a session cookie or token)
+            // with this request in a real application. For this simple example, we're assuming
+            // you are logged in via the browsable API or some other mechanism that sends a session cookie.
+
+            fetch('http://127.0.0.1:8000/api/incidents/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // If you were using token authentication:
+                    // 'Authorization': 'Token YOUR_AUTH_TOKEN'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messageDiv = document.getElementById('createIncidentMessage');
+                if (data.id) {
+                    messageDiv.textContent = `Incident created successfully with ID: ${data.incident_id}`;
+                    messageDiv.style.color = 'green';
+                    document.getElementById('createIncidentForm').reset();
+                } else if (data) {
+                    let errors = '';
+                    for (const key in data) {
+                        errors += `${key}: ${data[key].join(', ')}<br>`;
+                    }
+                    messageDiv.innerHTML = `Failed to create incident:<br>${errors}`;
+                    messageDiv.style.color = 'red';
+                } else {
+                    messageDiv.textContent = 'Failed to create incident due to an unknown error.';
+                    messageDiv.style.color = 'red';
+                }
+            })
+            .catch(error => {
+                console.error('Error creating incident:', error);
+                const messageDiv = document.getElementById('createIncidentMessage');
+                messageDiv.textContent = 'Failed to create incident. Please try again later.';
+                messageDiv.style.color = 'red';
+            });
+        });
+    </script>
+</body>
+</html>
