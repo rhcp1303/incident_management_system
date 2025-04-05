@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'incidents',
     'users',
     'corsheaders',
-    'drf_yasg'
+    'drf_yasg',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
