@@ -32,10 +32,27 @@
     </form>
     <script src="script.js"></script>
     <script>
+        function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            let cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = cookie.substring(name.length + 1);
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
         document.getElementById('createIncidentForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const formData = new FormData(this);
             const data = {};
+            const csrfToken = getCookie('csrftoken');
             formData.forEach((value, key) => (data[key] = value));
 
             // **Important:** You'll need to handle authentication (e.g., sending a session cookie or token)
@@ -46,6 +63,8 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                     'X-CSRFToken': csrfToken
+
                     // If you were using token authentication:
                     // 'Authorization': 'Token YOUR_AUTH_TOKEN'
                 },

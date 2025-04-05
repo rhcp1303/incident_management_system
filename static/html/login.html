@@ -19,18 +19,30 @@
         <button type="submit">Login</button>
         <div id="loginMessage"></div>
     </form>
-    <script src="script.js"></script>
     <script>
+
+        fetch('http://127.0.0.1:8000/api/users/register/', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken
+    },
+    body: JSON.stringify(data)
+})
         document.getElementById('loginForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const formData = new FormData(this);
             const data = {};
+            const csrfToken = getCookie('csrftoken');
+
             formData.forEach((value, key) => (data[key] = value));
 
             fetch('http://127.0.0.1:8000/api/users/login/', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                     'X-CSRFToken': csrfToken
+
                 },
                 body: JSON.stringify(data)
             })
