@@ -5,10 +5,17 @@ from django.contrib.auth import authenticate
 from users import serializers
 from .serializers import RegistrationSerializer, UserSerializer
 import requests
+from django.http import JsonResponse
+from django.middleware.csrf import get_token
+
+def get_csrf_token(request):
+    csrf = get_token(request)
+    return JsonResponse({'csrfToken': csrf})
 
 
 class RegistrationAPIView(generics.GenericAPIView):
     serializer_class = RegistrationSerializer
+    permission_classes = [permissions.AllowAny]  # ADD THIS LINE
 
     def post(self, request):
         serializer = self.get_serializer(data=request.data)

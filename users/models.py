@@ -17,7 +17,6 @@ class User(AbstractUser):
     mobile_number = models.CharField(max_length=20, blank=False, null=False)
     fax = models.CharField(max_length=20, blank=True, null=True)
     phone = models.CharField(max_length=20, blank=True, null=True)
-
     groups = models.ManyToManyField(
         'auth.Group',
         verbose_name=('groups'),

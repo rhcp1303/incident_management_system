@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import User
 
+
 class RegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
     password2 = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
@@ -31,6 +32,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = User.objects.create(
+            username=validated_data['email'],
             user_type=validated_data['user_type'],
             first_name=validated_data['first_name'],
             last_name=validated_data['last_name'],
@@ -49,6 +51,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
