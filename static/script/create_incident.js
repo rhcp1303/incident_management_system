@@ -4,7 +4,6 @@ function getCookie(name) {
         const cookies = document.cookie.split(';');
         for (let i = 0; i < cookies.length; i++) {
             let cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
             if (cookie.startsWith(name + '=')) {
                 cookieValue = cookie.substring(name.length + 1);
                 break;
@@ -22,8 +21,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const data = {};
         const csrfToken = getCookie('csrftoken');
         const messageDiv = document.getElementById('createIncidentMessage');
-        messageDiv.textContent = ''; // Clear previous messages
-        messageDiv.className = ''; // Clear previous classes
+        messageDiv.textContent = '';
+        messageDiv.className = '';
 
         formData.forEach((value, key) => (data[key] = value));
 
@@ -32,8 +31,6 @@ document.addEventListener('DOMContentLoaded', function() {
             headers: {
                 'Content-Type': 'application/json',
                  'X-CSRFToken': csrfToken
-                // If you were using token authentication:
-                // 'Authorization': 'Token YOUR_AUTH_TOKEN'
             },
             body: JSON.stringify(data)
         })

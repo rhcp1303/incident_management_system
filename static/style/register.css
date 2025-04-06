@@ -88,14 +88,14 @@ button[type="submit"]:hover {
 }
 
 .radio-group {
-    display: flex; /* This makes the children display in a row */
-    flex-direction: row; /* Ensures the row direction */
-    align-items: center; /* Vertically centers the items */
-    gap: 10px; /* Adds spacing between the items */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
 }
 
 .radio-group label {
-    margin-bottom: 0; /* Override any default bottom margin */
+    margin-bottom: 0;
 }
 
 .phone-container {
@@ -112,7 +112,6 @@ button[type="submit"]:hover {
     flex: 1;
 }
 
- /* Basic button styling (you can refine this) */
         .login-button {
             display: block;
             width: 100%;

@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate
 from .serializers import RegistrationSerializer, UserSerializer
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.hashers import  check_password
 from .models import User
 
 class RegistrationAPIView(generics.GenericAPIView):
