@@ -3,11 +3,11 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
+    email = models.EmailField(('email address'), unique=True)  # Use EmailField and enforce uniqueness
     user_type = models.CharField(max_length=20, choices=[('Individual', 'Individual'), ('Enterprise', 'Enterprise'),
                                                          ('Government', 'Government')], default='Individual')
     first_name = models.CharField(max_length=150, blank=False, null=False)
     last_name = models.CharField(max_length=150, blank=False, null=False)
-    email = models.CharField(max_length=150, blank=False, null=False)
     address = models.TextField(blank=False, null=False)
     country = models.CharField(max_length=100, blank=False, null=False)
     state = models.CharField(max_length=100, blank=False, null=False)
@@ -36,6 +36,10 @@ class User(AbstractUser):
         related_name="incident_management_users_permissions",
         related_query_name="user",
     )
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'address', 'country', 'state', 'city', 'pincode', 'mobile_isd_code',
+                       'mobile_number']
 
     def __str__(self):
         return self.email

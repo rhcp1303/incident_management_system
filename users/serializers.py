@@ -22,7 +22,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
             'pin_code': {'required': True},
             'mobile_isd_code': {'required': True},
             'mobile_number': {'required': True}
-
         }
 
     def validate(self, data):
@@ -31,12 +30,13 @@ class RegistrationSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        user = User.objects.create(
+        user = User.objects.create_user(
             username=validated_data['email'],
+            email=validated_data['email'],
+            password=validated_data['password'],
             user_type=validated_data['user_type'],
             first_name=validated_data['first_name'],
             last_name=validated_data['last_name'],
-            email=validated_data['email'],
             address=validated_data['address'],
             country=validated_data['country'],
             state=validated_data['state'],
@@ -47,11 +47,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
             fax=validated_data.get('fax', ''),
             phone=validated_data.get('phone', '')
         )
-
-        user.set_password(validated_data['password'])
-        user.save()
         return user
-
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

@@ -2,14 +2,7 @@ from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate
-from users import serializers
 from .serializers import RegistrationSerializer, UserSerializer
-from django.http import JsonResponse
-from django.middleware.csrf import get_token
-
-def get_csrf_token(request):
-    csrf = get_token(request)
-    return JsonResponse({'csrfToken': csrf})
 
 
 class RegistrationAPIView(generics.GenericAPIView):
@@ -26,12 +19,15 @@ class RegistrationAPIView(generics.GenericAPIView):
 
 
 class LoginAPIView(generics.GenericAPIView):
-    serializer_class = serializers.UserSerializer
+    permission_classes = [permissions.AllowAny]
 
     def post(self, request):
-        username = request.data.get('username')
+        email = request.data.get('email')
+        print(email)
         password = request.data.get('password')
-        user = authenticate(request, username=username, password=password)
+        print(password)
+        user = authenticate(request, email=email, password=password)
+        print(user)
         if user:
             return Response({"message": "Login successful"}, status=status.HTTP_200_OK)
         else:

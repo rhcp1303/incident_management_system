@@ -1,22 +1,21 @@
 function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            let cookie = cookies[i].trimStart();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = cookie.substring(name.length + 1);
+                    break;
+                }
             }
         }
+        return cookieValue;
     }
-    return cookieValue;
-}
 
 document.addEventListener('DOMContentLoaded', function() {
     const loginForm = document.getElementById('loginForm');
     const messageDiv = document.getElementById('loginMessage');
-
     loginForm.addEventListener('submit', function(event) {
         event.preventDefault();
         const formData = new FormData(this);
@@ -24,9 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const csrfToken = getCookie('csrftoken');
         messageDiv.textContent = '';
         messageDiv.className = '';
-
         formData.forEach((value, key) => (data[key] = value));
-
         fetch('/api/users/login/', {
             method: 'POST',
             headers: {
