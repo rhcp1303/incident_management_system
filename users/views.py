@@ -4,7 +4,6 @@ from rest_framework import status
 from django.contrib.auth import authenticate
 from users import serializers
 from .serializers import RegistrationSerializer, UserSerializer
-import requests
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
 
@@ -15,7 +14,7 @@ def get_csrf_token(request):
 
 class RegistrationAPIView(generics.GenericAPIView):
     serializer_class = RegistrationSerializer
-    permission_classes = [permissions.AllowAny]  # ADD THIS LINE
+    permission_classes = [permissions.AllowAny]
 
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
@@ -52,24 +51,3 @@ class UserDetailsAPIView(generics.RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
-
-
-class FetchCityCountryAPIView(generics.GenericAPIView):
-    def post(self, request):
-        pin_code = request.data.get('pin_code')
-        if not pin_code:
-            return Response({"error": "Pin code is required"}, status=status.HTTP_400_BAD_REQUEST)
-        api_url = f"https://api.postalpincode.in/pincode/{pin_code}"
-        try:
-            response = requests.get(api_url)
-            response.raise_for_status()
-            data = response.json()
-            if data and data.get('Status') == "Success" and data.get('PostOffice'):
-                city = data['PostOffice'][0].get('District')
-                country = data['result'].get('country')
-                return Response({"city": city, "country": country}, status=status.HTTP_200_OK)
-            else:
-                return Response({"error": "Could not find city and country for this pin code"},
-                                status=status.HTTP_404_NOT_FOUND)
-        except requests.exceptions.RequestException as e:
-            return Response({"error": f"Error fetching data: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

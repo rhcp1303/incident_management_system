@@ -4,7 +4,6 @@ function getCookie(name) {
         const cookies = document.cookie.split(';');
         for (let i = 0; i < cookies.length; i++) {
             let cookie = cookies[i].trimStart();
-            // Does this cookie string begin with the name we want?
             if (cookie.substring(0, name.length + 1) === (name + '=')) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                 break;
@@ -23,12 +22,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData(this);
         const data = {};
         const csrfToken = getCookie('csrftoken');
-        messageDiv.textContent = ''; // Clear previous messages
-        messageDiv.className = ''; // Clear previous classes
+        messageDiv.textContent = '';
+        messageDiv.className = '';
 
         formData.forEach((value, key) => (data[key] = value));
 
-        fetch('http://127.0.0.1:8000/api/users/login/', {
+        fetch('/api/users/login/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

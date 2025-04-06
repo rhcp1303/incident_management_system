@@ -1,7 +1,6 @@
 from rest_framework import generics, permissions
 from .models import Incident
 from .serializers import IncidentSerializer
-from django.shortcuts import render
 
 class IncidentListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = IncidentSerializer
