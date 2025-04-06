@@ -3,7 +3,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate
 from .serializers import RegistrationSerializer, UserSerializer
-
+from django.contrib.auth.hashers import make_password, check_password
+from .models import User
 
 class RegistrationAPIView(generics.GenericAPIView):
     serializer_class = RegistrationSerializer
@@ -23,15 +24,22 @@ class LoginAPIView(generics.GenericAPIView):
 
     def post(self, request):
         email = request.data.get('email')
-        print(email)
         password = request.data.get('password')
-        print(password)
-        user = authenticate(request, email=email, password=password)
-        print(user)
-        if user:
+        user = User.objects.get(email=email)
+        if check_password(password,user.password):
+            print("yes")
             return Response({"message": "Login successful"}, status=status.HTTP_200_OK)
+
         else:
+            print("no")
             return Response({"error": "Invalid Credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        # user = authenticate(request, email=email, password=password)
+        # print(user)
+        # if user:
+        #     return Response({"message": "Login successful"}, status=status.HTTP_200_OK)
+        # else:
+        #     return Response({"error": "Invalid Credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class LogoutAPIView(generics.GenericAPIView):
