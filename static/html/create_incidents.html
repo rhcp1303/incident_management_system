@@ -4,96 +4,179 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Incident</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .incident-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 500px;
+            max-width: 90%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        select,
+        textarea {
+            width: calc(100% - 12px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+            font-family: sans-serif; /* Ensure consistent font */
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        button[type="submit"] {
+            background-color: #28a745; /* Green for create */
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #1e7e34;
+        }
+
+        #createIncidentMessage {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .success {
+            color: green;
+        }
+    </style>
 </head>
 <body>
-    <h1>Create New Incident</h1>
-    <form id="createIncidentForm">
-        <div>
-            <label for="enterprise_or_government">Organization Type:</label>
-            <select id="enterprise_or_government" name="enterprise_or_government" required>
-                <option value="Enterprise">Enterprise</option>
-                <option value="Government">Government</option>
-            </select>
-        </div>
-        <div>
-            <label for="incident_details">Incident Details:</label>
-            <textarea id="incident_details" name="incident_details" rows="5" required></textarea>
-        </div>
-        <div>
-            <label for="priority">Priority:</label>
-            <select id="priority" name="priority">
-                <option value="High">High</option>
-                <option value="Medium" selected>Medium</option>
-                <option value="Low">Low</option>
-            </select>
-        </div>
-        <button type="submit">Create Incident</button>
-        <div id="createIncidentMessage"></div>
-    </form>
-    <script src="script.js"></script>
+    <div class="incident-container">
+        <h1>Create New Incident</h1>
+        <form id="createIncidentForm">
+            <div class="form-group">
+                <label for="enterprise_or_government">Organization Type:</label>
+                <select id="enterprise_or_government" name="enterprise_or_government" required>
+                    <option value="Enterprise">Enterprise</option>
+                    <option value="Government">Government</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="incident_details">Incident Details:</label>
+                <textarea id="incident_details" name="incident_details" rows="5" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="priority">Priority:</label>
+                <select id="priority" name="priority">
+                    <option value="High">High</option>
+                    <option value="Medium" selected>Medium</option>
+                    <option value="Low">Low</option>
+                </select>
+            </div>
+            <button type="submit">Create Incident</button>
+            <div id="createIncidentMessage"></div>
+        </form>
+    </div>
     <script>
         function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            let cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
-            if (cookie.startsWith(name + '=')) {
-                cookieValue = cookie.substring(name.length + 1);
-                break;
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    let cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.startsWith(name + '=')) {
+                        cookieValue = cookie.substring(name.length + 1);
+                        break;
+                    }
+                }
             }
+            return cookieValue;
         }
-    }
-    return cookieValue;
-}
 
         document.getElementById('createIncidentForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const formData = new FormData(this);
             const data = {};
             const csrfToken = getCookie('csrftoken');
-            formData.forEach((value, key) => (data[key] = value));
+            const messageDiv = document.getElementById('createIncidentMessage');
+            messageDiv.textContent = ''; // Clear previous messages
+            messageDiv.className = ''; // Clear previous classes
 
-            // **Important:** You'll need to handle authentication (e.g., sending a session cookie or token)
-            // with this request in a real application. For this simple example, we're assuming
-            // you are logged in via the browsable API or some other mechanism that sends a session cookie.
+            formData.forEach((value, key) => (data[key] = value));
 
             fetch('http://127.0.0.1:8000/api/incidents/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                      'X-CSRFToken': csrfToken
-
                     // If you were using token authentication:
                     // 'Authorization': 'Token YOUR_AUTH_TOKEN'
                 },
                 body: JSON.stringify(data)
             })
             .then(response => response.json())
-            .then(data => {
-                const messageDiv = document.getElementById('createIncidentMessage');
-                if (data.id) {
-                    messageDiv.textContent = `Incident created successfully with ID: ${data.incident_id}`;
-                    messageDiv.style.color = 'green';
+            .then(responseData => {
+                if (responseData.id) {
+                    messageDiv.textContent = `Incident created successfully with ID: ${responseData.id}`;
+                    messageDiv.className = 'success';
                     document.getElementById('createIncidentForm').reset();
-                } else if (data) {
+                    console.log('Incident created successfully:', responseData);
+                } else if (responseData) {
                     let errors = '';
-                    for (const key in data) {
-                        errors += `${key}: ${data[key].join(', ')}<br>`;
+                    for (const key in responseData) {
+                        errors += `${key}: ${responseData[key].join(', ')}<br>`;
                     }
                     messageDiv.innerHTML = `Failed to create incident:<br>${errors}`;
-                    messageDiv.style.color = 'red';
+                    messageDiv.className = 'error';
+                    console.error('Failed to create incident:', responseData);
                 } else {
                     messageDiv.textContent = 'Failed to create incident due to an unknown error.';
-                    messageDiv.style.color = 'red';
+                    messageDiv.className = 'error';
+                    console.error('Failed to create incident: unknown error', responseData);
                 }
             })
             .catch(error => {
                 console.error('Error creating incident:', error);
-                const messageDiv = document.getElementById('createIncidentMessage');
                 messageDiv.textContent = 'Failed to create incident. Please try again later.';
-                messageDiv.style.color = 'red';
+                messageDiv.className = 'error';
             });
         });
     </script>

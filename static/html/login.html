@@ -4,36 +4,124 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .login-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 350px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: calc(100% - 12px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        button[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        #loginMessage {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .success {
+            color: green;
+        }
+    </style>
 </head>
 <body>
-    <h1>Login</h1>
-    <form id="loginForm">
-        <div>
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-        </div>
-        <div>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-        <button type="submit">Login</button>
-        <div id="loginMessage"></div>
-    </form>
+    <div class="login-container">
+        <h1>Login</h1>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">Login</button>
+            <div id="loginMessage"></div>
+        </form>
+    </div>
     <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    let cookie = cookies[i].trimStart();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
 
-        fetch('http://127.0.0.1:8000/api/users/register/', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': csrfToken
-    },
-    body: JSON.stringify(data)
-})
         document.getElementById('loginForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const formData = new FormData(this);
             const data = {};
             const csrfToken = getCookie('csrftoken');
+            const messageDiv = document.getElementById('loginMessage');
+            messageDiv.textContent = ''; // Clear previous messages
+            messageDiv.className = ''; // Clear previous classes
 
             formData.forEach((value, key) => (data[key] = value));
 
@@ -42,30 +130,30 @@
                 headers: {
                     'Content-Type': 'application/json',
                      'X-CSRFToken': csrfToken
-
                 },
                 body: JSON.stringify(data)
             })
             .then(response => response.json())
-            .then(data => {
-                const messageDiv = document.getElementById('loginMessage');
-                if (data.message === 'Login successful') {
+            .then(responseData => {
+                if (responseData.message === 'Login successful') {
                     messageDiv.textContent = 'Login successful!';
-                    messageDiv.style.color = 'green';
+                    messageDiv.className = 'success';
                     // In a real application, you would handle session storage here
-                } else if (data.error) {
-                    messageDiv.textContent = `Login failed: ${data.error}`;
-                    messageDiv.style.color = 'red';
+                    console.log('Login successful:', responseData); // Log success data
+                } else if (responseData.error) {
+                    messageDiv.textContent = `Login failed: ${responseData.error}`;
+                    messageDiv.className = 'error';
+                    console.error('Login failed:', responseData.error); // Log error
                 } else {
                     messageDiv.textContent = 'Login failed due to an unknown error.';
-                    messageDiv.style.color = 'red';
+                    messageDiv.className = 'error';
+                    console.error('Login failed: unknown error', responseData); // Log unknown error
                 }
             })
             .catch(error => {
                 console.error('Error during login:', error);
-                const messageDiv = document.getElementById('loginMessage');
                 messageDiv.textContent = 'Login failed. Please try again later.';
-                messageDiv.style.color = 'red';
+                messageDiv.className = 'error';
             });
         });
     </script>

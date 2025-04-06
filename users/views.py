@@ -52,13 +52,13 @@ class FetchCityCountryAPIView(generics.GenericAPIView):
         pin_code = request.data.get('pin_code')
         if not pin_code:
             return Response({"error": "Pin code is required"}, status=status.HTTP_400_BAD_REQUEST)
-        api_url = f"https://api.postcodes.io/postcodes/{pin_code}"
+        api_url = f"https://api.postalpincode.in/pincode/{pin_code}"
         try:
             response = requests.get(api_url)
             response.raise_for_status()
             data = response.json()
-            if data and data.get('status') == 200 and data.get('result'):
-                city = data['result'].get('admin_district') or data['result'].get('region')
+            if data and data.get('Status') == "Success" and data.get('PostOffice'):
+                city = data['PostOffice'][0].get('District')
                 country = data['result'].get('country')
                 return Response({"city": city, "country": country}, status=status.HTTP_200_OK)
             else:
