@@ -282,20 +282,54 @@ document.addEventListener('DOMContentLoaded', function() {
         isdCodeSelect.appendChild(option);
     });
 
-//    pinCodeInput.addEventListener('blur', async function() {
-//        const pincode = this.value.trim();
-//        if (pincode) {
-//            const details = await fetchPincodeDetails(pincode);
-//            if (details.city && details.country) {
-//                cityInput.value = details.city;
-//                countryInput.value = details.country;
-//            } else {
-//                cityInput.value = "";
-//                countryInput.value = "";
-//                alert("Could not find city and country for the given pincode.");
-//            }
-//        }
-//    });
+    async function fetchGeocodeData(pincode) {
+        const apiKey = '053ced3cafe14b13a3c7109717791d4e';
+        const apiUrl = `https://api.geoapify.com/v1/geocode/search?postcode=${pincode}&format=json&apiKey=${apiKey}`;
+
+        try {
+            const response = await fetch(apiUrl);
+            if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("Error fetching geocode data:", error);
+            return null;
+        }
+        }
+
+
+    pinCodeInput.addEventListener('blur', async function() {
+        const pincode = this.value.trim();
+        const stateElement = document.getElementById("state");
+        const cityElement = document.getElementById("city");
+        const countryElement = document.getElementById("country");
+
+
+        if (pincode) {
+            const data = await fetchGeocodeData(pincode);
+            if (data && data.results && data.results.length > 0 && data.results[0].state) {
+                const state = data.results[0].state;
+                stateElement.value = state || '';
+               } else {
+            console.log("State information not found in the response.");
+            }
+            if (data && data.results && data.results.length > 0 && data.results[0].country) {
+                const country = data.results[0].country;
+                countryElement.value = country || '';
+               } else {
+            console.log("State information not found in the response.");
+            }
+            if (data && data.results && data.results.length > 0) {
+                const city = data.results[0].city||data.results[0].county||data.results[0].state
+                cityElement.value = city || '';
+               } else {
+            console.log("State information not found in the response.");
+            }
+        }
+    });
+
 
     registrationForm.addEventListener('submit', async function(event) {
         event.preventDefault();
@@ -306,22 +340,17 @@ document.addEventListener('DOMContentLoaded', function() {
             messageDiv.className = 'error-message';
             return;
         }
-
-        const csrfToken = getCookie('csrftoken'); // Get the token from the cookie
-        console.log('CSRF Token from cookie:', csrfToken); // Debugging
-
+        const csrfToken = getCookie('csrftoken');
         try {
             const response = await fetch('/api/users/register/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken // Set the header with the cookie value
+                    'X-CSRFToken': csrfToken
                 },
                 body: JSON.stringify(data)
             });
-
             const result = await response.json();
-
             if (response.ok) {
                 messageDiv.textContent = "Registration successful!";
                 messageDiv.className = 'success-message';
@@ -330,7 +359,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 messageDiv.textContent = `Registration failed: ${result.error || result.message || JSON.stringify(result)}`;
                 messageDiv.className = 'error-message';
             }
-
         } catch (error) {
             console.error("Registration error:", error);
             messageDiv.textContent = "An error occurred during registration.";
