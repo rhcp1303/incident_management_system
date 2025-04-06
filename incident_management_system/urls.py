@@ -21,7 +21,6 @@ from drf_yasg.views import get_schema_view as get_yasg_view
 from drf_yasg import openapi
 from rest_framework import permissions
 
-
 schema_view = get_yasg_view(
     openapi.Info(
         title="Incident Management API",
@@ -39,4 +38,3 @@ urlpatterns = [
     path('openapi/', schema_view.with_ui('swagger', cache_timeout=0), name='openapi-schema'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='redoc-schema'),
 ]
-
