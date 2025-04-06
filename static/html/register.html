@@ -1,55 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
     <link rel="stylesheet" href="/static/style/register.css">
 </head>
+
 <body>
     <div class="registration-container">
         <h1>Register</h1>
         <form id="registrationForm">
+
             <div class="form-group">
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required>
+                <label>Individual/Enterprise/Government:</label>
+                <div class="radio-group">
+                    <input type="radio" id="individual" name="user_type" value="Individual" required>
+                    <label for="individual">Individual</label>
+
+                    <input type="radio" id="enterprise" name="user_type" value="Enterprise" required>
+                    <label for="enterprise">Enterprise</label>
+
+                    <input type="radio" id="government" name="user_type" value="Government" required>
+                    <label for="government">Government</label>
+                </div>
             </div>
+
+            <div class="form-group">
+                <label for="first_name">First Name:</label>
+                <input type="text" id="first_name" name="first_name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="last_name">Last Name:</label>
+                <input type="text" id="last_name" name="last_name" required>
+            </div>
+
             <div class="form-group">
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" required>
             </div>
-            <div class="form-group">
-                <label for="phone_number">Phone Number:</label>
-                <input type="text" id="phone_number" name="phone_number">
-            </div>
+
             <div class="form-group">
                 <label for="address">Address:</label>
-                <textarea id="address" name="address"></textarea>
+                <textarea id="address" name="address" required></textarea>
             </div>
-            <div class="form-group">
-                <label for="pin_code">Pin Code:</label>
-                <input type="text" id="pin_code" name="pin_code">
-            </div>
-            <div class="form-group">
-                <label for="city">City:</label>
-                <input type="text" id="city" name="city" readonly>
-            </div>
+
             <div class="form-group">
                 <label for="country">Country:</label>
-                <input type="text" id="country" name="country" readonly>
+                <input type="text" id="country" name="country"  required>
             </div>
+
+            <div class="form-group">
+                <label for="state">State:</label>
+                <input type="text" id="state" name="state" required>
+            </div>
+
+            <div class="form-group">
+                <label for="city">City:</label>
+                <input type="text" id="city" name="city"  required>
+            </div>
+
+            <div class="form-group">
+                <label for="pin_code">Pin Code:</label>
+                <input type="text" id="pin_code" name="pin_code" required>
+            </div>
+
+            <div class="form-group phone-container">
+                <label for="mobile_isd_code">Mobile Number:</label>
+                <div>
+                    <select id="mobile_isd_code" name="mobile_isd_code" required>
+                        </select>
+                    <input type="text" id="mobile_number" name="mobile_number" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="fax">Fax:</label>
+                <input type="text" id="fax" name="fax">
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone:</label>
+                <input type="text" id="phone" name="phone">
+            </div>
+
             <div class="form-group">
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" required>
             </div>
+
             <div class="form-group">
                 <label for="password2">Confirm Password:</label>
                 <input type="password" id="password2" name="password2" required>
             </div>
+
             <button type="submit">Register</button>
+
             <div id="registrationMessage"></div>
         </form>
     </div>
     <script src="/static/script/register.js"></script>
 </body>
+
 </html>

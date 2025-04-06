@@ -5,6 +5,11 @@ from django.contrib.auth import authenticate
 from users import serializers
 from .serializers import RegistrationSerializer, UserSerializer
 import requests
+from django.shortcuts import render  # Import the render function
+
+
+def register_view(request):
+    return render(request, 'users/register.html')
 
 
 class RegistrationAPIView(generics.GenericAPIView):

@@ -37,7 +37,8 @@ label {
 input[type="text"],
 input[type="email"],
 input[type="password"],
-textarea {
+textarea,
+select {
     width: calc(100% - 12px);
     padding: 10px;
     border: 1px solid #ccc;
@@ -57,7 +58,7 @@ input[readonly] {
 }
 
 button[type="submit"] {
-    background-color: #007bff; /* Blue for register */
+    background-color: #007bff;
     color: white;
     padding: 10px 15px;
     border: none;
@@ -84,4 +85,29 @@ button[type="submit"]:hover {
 
 .success {
     color: green;
+}
+
+.radio-group {
+    display: flex; /* This makes the children display in a row */
+    flex-direction: row; /* Ensures the row direction */
+    align-items: center; /* Vertically centers the items */
+    gap: 10px; /* Adds spacing between the items */
+}
+
+.radio-group label {
+    margin-bottom: 0; /* Override any default bottom margin */
+}
+
+.phone-container {
+    display: flex;
+    align-items: center;
+}
+
+#mobile_isd_code {
+    width: auto;
+    margin-right: 10px;
+}
+
+#mobile_number {
+    flex: 1;
 }
