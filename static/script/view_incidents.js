@@ -1,4 +1,3 @@
-// /static/script/view_incidents.js
 function fetchIncidents() {
     const accessToken = localStorage.getItem('accessToken');
     fetch('http://127.0.0.1:8000/api/incidents/', {
@@ -24,7 +23,9 @@ function fetchIncidents() {
         if (Array.isArray(data) && data.length > 0) {
             const ul = document.createElement('ul');
             data.forEach(incident => {
+                // Store the original incident data as a data attribute on the li element
                 const li = document.createElement('li');
+                li.dataset.originalIncident = JSON.stringify(incident);
                 li.innerHTML = `
                     <strong>Reporter Name:</strong> ${incident.reporter_name}<br>
                     <form class="edit-incident-form" data-incident-id="${incident.id}">
@@ -56,7 +57,7 @@ function fetchIncidents() {
                 ul.appendChild(li);
             });
             incidentsListDiv.appendChild(ul);
-            attachUpdateListeners(); // Attach event listeners after rendering the forms
+            attachUpdateListeners();
         } else {
             const p = document.createElement('p');
             p.classList.add('no-incidents');
@@ -80,12 +81,19 @@ function attachUpdateListeners() {
         form.addEventListener('submit', function(event) {
             event.preventDefault();
             const incidentId = this.dataset.incidentId;
+            const liElement = this.closest('li');
+            const originalIncident = JSON.parse(liElement.dataset.originalIncident);
             const formData = new FormData(this);
-            const data = {
-                incident_details: formData.get('incident_details'),
-                status: formData.get('status'),
-                priority: formData.get('priority')
-            };
+            const updatedData = {};
+
+            // Populate updatedData with form values
+            formData.forEach((value, key) => {
+                updatedData[key] = value;
+            });
+
+            // Merge updatedData into the original incident data
+            const dataToSend = { ...originalIncident, ...updatedData };
+
             const accessToken = localStorage.getItem('accessToken');
             const updateMessageDiv = document.getElementById(`updateMessage_${incidentId}`);
             updateMessageDiv.textContent = 'Updating...';
@@ -98,7 +106,7 @@ function attachUpdateListeners() {
                     'Authorization': `Bearer ${accessToken}`,
                     'X-CSRFToken': getCookie('csrftoken')
                 },
-                body: JSON.stringify(data)
+                body: JSON.stringify(dataToSend)
             })
             .then(response => {
                 if (!response.ok) {
@@ -117,11 +125,11 @@ function attachUpdateListeners() {
             .then(updatedIncident => {
                 updateMessageDiv.textContent = `Incident ${incidentId} updated successfully.`;
                 updateMessageDiv.className = 'success';
-                // Optionally, update the displayed data without a full refresh
-                const liElement = this.closest('li');
+                liElement.dataset.originalIncident = JSON.stringify(updatedIncident); // Update stored data
                 liElement.querySelector('.incident-details').innerHTML = `<strong>Details:</strong> ${updatedIncident.incident_details.substring(0, 100)}...`;
                 liElement.querySelector('select[name="status"]').value = updatedIncident.status;
                 liElement.querySelector('select[name="priority"]').value = updatedIncident.priority;
+                // Update other displayed fields if necessary
             })
             .catch(error => {
                 console.error('Error updating incident:', error);

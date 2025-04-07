@@ -15,7 +15,7 @@ class IncidentListCreateAPIView(generics.ListCreateAPIView):
         serializer.save(created_by=self.request.user,
                         reporter_name=self.request.user.first_name,
                         reporter_email=self.request.user.email,
-                        reporter_phone=self.request.user.phone)
+                        reporter_phone=self.request.user.mobile_isd_code + self.request.user.mobile_number)
 
 
 class IncidentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -24,7 +24,6 @@ class IncidentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
 
     def get_queryset(self):
         return Incident.objects.filter(created_by=self.request.user)
-
 
 
 class IncidentSearchAPIView(generics.ListAPIView):
