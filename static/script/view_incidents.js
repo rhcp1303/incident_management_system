@@ -23,7 +23,6 @@ function fetchIncidents() {
         if (Array.isArray(data) && data.length > 0) {
             const ul = document.createElement('ul');
             data.forEach(incident => {
-                // Store the original incident data as a data attribute on the li element
                 const li = document.createElement('li');
                 li.dataset.originalIncident = JSON.stringify(incident);
                 li.innerHTML = `
@@ -85,15 +84,10 @@ function attachUpdateListeners() {
             const originalIncident = JSON.parse(liElement.dataset.originalIncident);
             const formData = new FormData(this);
             const updatedData = {};
-
-            // Populate updatedData with form values
             formData.forEach((value, key) => {
                 updatedData[key] = value;
             });
-
-            // Merge updatedData into the original incident data
             const dataToSend = { ...originalIncident, ...updatedData };
-
             const accessToken = localStorage.getItem('accessToken');
             const updateMessageDiv = document.getElementById(`updateMessage_${incidentId}`);
             updateMessageDiv.textContent = 'Updating...';
@@ -125,11 +119,10 @@ function attachUpdateListeners() {
             .then(updatedIncident => {
                 updateMessageDiv.textContent = `Incident ${incidentId} updated successfully.`;
                 updateMessageDiv.className = 'success';
-                liElement.dataset.originalIncident = JSON.stringify(updatedIncident); // Update stored data
+                liElement.dataset.originalIncident = JSON.stringify(updatedIncident);
                 liElement.querySelector('.incident-details').innerHTML = `<strong>Details:</strong> ${updatedIncident.incident_details.substring(0, 100)}...`;
                 liElement.querySelector('select[name="status"]').value = updatedIncident.status;
                 liElement.querySelector('select[name="priority"]').value = updatedIncident.priority;
-                // Update other displayed fields if necessary
             })
             .catch(error => {
                 console.error('Error updating incident:', error);
