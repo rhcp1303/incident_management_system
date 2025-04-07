@@ -1,6 +1,6 @@
 function fetchIncidents() {
     const accessToken = localStorage.getItem('accessToken');
-    fetch('http://127.0.0.1:8000/api/incidents', {
+    fetch('http://127.0.0.1:8000/api/incidents/', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -54,6 +54,7 @@ function fetchIncidents() {
 document.addEventListener('DOMContentLoaded', function() {
     const accessToken = localStorage.getItem('accessToken');
     const tokenExpiry = localStorage.getItem('tokenExpiry');
+    const createIncidentBtn = document.getElementById('createIncidentBtn');
 
     if (!accessToken || !tokenExpiry || Date.now() >= parseInt(tokenExpiry)) {
         localStorage.removeItem('accessToken');
@@ -62,4 +63,8 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         fetchIncidents();
     }
+
+    createIncidentBtn.addEventListener('click', function() {
+        window.location.href = '/static/html/create_incident.html';
+    });
 });

@@ -56,3 +56,26 @@ h1 {
     color: red;
     font-weight: bold;
 }
+
+
+
+#createIncidentBtn {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-bottom: 15px;
+    transition: background-color 0.3s ease;
+}
+
+#createIncidentBtn:hover {
+    background-color: #218838;
+}
+
+#createIncidentBtn:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.5);
+}

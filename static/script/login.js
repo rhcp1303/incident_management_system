@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 messageDiv.className = 'success';
                 localStorage.setItem('accessToken', responseData.access);
                 localStorage.setItem('tokenExpiry', responseData.expiry);
-                window.location.href = '/static/html/create_incident.html';
+                window.location.href = '/static/html/view_incidents.html';
                 console.log('Login successful:', responseData);
             } else if (responseData.error) {
                 messageDiv.textContent = `Login failed: ${responseData.error}`;
