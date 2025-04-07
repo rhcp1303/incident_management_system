@@ -34,7 +34,6 @@ class LoginAPIView(generics.GenericAPIView):
             access_token_lifetime = settings.SIMPLE_JWT.get('ACCESS_TOKEN_LIFETIME')
             expiry_timestamp = int(
                 (datetime.now(timezone.utc) + access_token_lifetime).timestamp() * 1000)
-            print(expiry_timestamp)
 
             return Response({
                 'refresh': str(refresh),
