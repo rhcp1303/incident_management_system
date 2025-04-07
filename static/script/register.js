@@ -355,6 +355,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 messageDiv.textContent = "Registration successful!";
                 messageDiv.className = 'success-message';
                 registrationForm.reset();
+                window.location.href = '/static/html/login.html';
+
             } else {
                 messageDiv.textContent = `Registration failed: ${result.error || result.message || JSON.stringify(result)}`;
                 messageDiv.className = 'error-message';
