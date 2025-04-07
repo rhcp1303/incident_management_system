@@ -1,9 +1,6 @@
-// /static/js/view_incidents.js
 function fetchIncidents() {
     const accessToken = localStorage.getItem('accessToken');
-    alert(accessToken)
-
-    fetch('http://127.0.0.1:8000/api/incidents/search', {
+    fetch('http://127.0.0.1:8000/api/incidents', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -13,7 +10,6 @@ function fetchIncidents() {
     .then(response => {
         if (!response.ok) {
             if (response.status === 401 || response.status === 403) {
-                // Redirect to login if unauthorized
                 window.location.href = '/static/html/login.html';
                 throw new Error('Unauthorized');
             }
@@ -23,7 +19,7 @@ function fetchIncidents() {
     })
     .then(data => {
         const incidentsListDiv = document.getElementById('incidentsList');
-        incidentsListDiv.innerHTML = ''; // Clear loading message
+        incidentsListDiv.innerHTML = '';
         if (Array.isArray(data) && data.length > 0) {
             const ul = document.createElement('ul');
             data.forEach(incident => {
