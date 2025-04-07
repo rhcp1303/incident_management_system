@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     messageDiv.className = 'success';
                     document.getElementById('createIncidentForm').reset();
                     console.log('Incident created successfully:', responseData);
-                    window.location.href = '/static/view_incidents.html';
+                    window.location.href = '/static/html/view_incidents.html';
                 } else if (responseData) {
                     let errors = '';
                     for (const key in responseData) {
