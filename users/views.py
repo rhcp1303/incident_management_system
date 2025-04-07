@@ -2,11 +2,10 @@ from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import RegistrationSerializer, UserSerializer
-from django.contrib.auth.hashers import check_password
-from .models import User
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.conf import settings
 from datetime import datetime, timezone
+from django.contrib.auth import authenticate
 
 
 class RegistrationAPIView(generics.GenericAPIView):
@@ -26,10 +25,11 @@ class LoginAPIView(generics.GenericAPIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
-        email = request.data.get('email')
+        email = request.data.get('email').lower()
         password = request.data.get('password')
-        user = User.objects.get(email=email)
-        if check_password(password, user.password):
+        user = authenticate(request, email=email, password=password)
+
+        if user:
             refresh = RefreshToken.for_user(user)
             access_token_lifetime = settings.SIMPLE_JWT.get('ACCESS_TOKEN_LIFETIME')
             expiry_timestamp = int(

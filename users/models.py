@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    email = models.EmailField(('email address'), unique=True)  # Use EmailField and enforce uniqueness
+    email = models.EmailField(('email address'), unique=True)
     user_type = models.CharField(max_length=20, choices=[('Individual', 'Individual'), ('Enterprise', 'Enterprise'),
                                                          ('Government', 'Government')], default='Individual')
     first_name = models.CharField(max_length=150, blank=False, null=False)

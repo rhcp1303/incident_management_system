@@ -9,6 +9,10 @@ class IncidentListCreateAPIView(generics.ListCreateAPIView):
     def get_queryset(self):
         return Incident.objects.filter(created_by=self.request.user)
 
+    def post(self, request, *args, **kwargs):
+        print(f"Request Headers: {request.headers}")
+        return super().post(request, *args, **kwargs)
+
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user,
                         reporter_name=self.request.user.username,
