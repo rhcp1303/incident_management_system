@@ -120,7 +120,7 @@ function attachUpdateListeners() {
                 updateMessageDiv.textContent = `Incident ${incidentId} updated successfully.`;
                 updateMessageDiv.className = 'success';
                 liElement.dataset.originalIncident = JSON.stringify(updatedIncident);
-                liElement.querySelector('.incident-details').innerHTML = `<strong>Details:</strong> ${updatedIncident.incident_details.substring(0, 100)}...`;
+//                liElement.querySelector('.incident-details').innerHTML = `<strong>Details:</strong> ${updatedIncident.incident_details.substring(0, 100)}...`;
                 liElement.querySelector('select[name="status"]').value = updatedIncident.status;
                 liElement.querySelector('select[name="priority"]').value = updatedIncident.priority;
             })
