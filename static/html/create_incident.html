@@ -32,7 +32,16 @@
             <button type="submit">Create Incident</button>
             <div id="createIncidentMessage"></div>
         </form>
+        <button id="viewIncidentsBtn">View My Incidents</button>
     </div>
     <script src="/static/script/create_incident.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const viewIncidentsBtn = document.getElementById('viewIncidentsBtn');
+            viewIncidentsBtn.addEventListener('click', function() {
+                window.location.href = '/static/html/view_incidents.html';
+            });
+        });
+    </script>
 </body>
 </html>
