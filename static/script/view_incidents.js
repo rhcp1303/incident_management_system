@@ -25,10 +25,11 @@ function fetchIncidents() {
             data.forEach(incident => {
                 const li = document.createElement('li');
                 li.innerHTML = `
-                    <strong>ID:</strong> ${incident.incident_id}<br>
+                    <strong>Reporter Name:</strong> ${incident.reporter_name}<br>
+                    <span class="incident-details"><strong>Details:</strong> ${incident.incident_details.substring(0, 100)}...</span><br>
+                    <strong>Reported Time:</strong> ${incident.incident_reported_datetime}<br>
                     <strong>Priority:</strong> ${incident.priority}<br>
                     <strong>Status:</strong> ${incident.status}<br>
-                    <span class="incident-details"><strong>Details:</strong> ${incident.incident_details.substring(0, 100)}...</span>
                 `;
                 ul.appendChild(li);
             });
