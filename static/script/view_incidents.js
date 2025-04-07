@@ -1,3 +1,4 @@
+// /static/script/view_incidents.js
 function fetchIncidents() {
     const accessToken = localStorage.getItem('accessToken');
     fetch('http://127.0.0.1:8000/api/incidents/', {
@@ -26,14 +27,36 @@ function fetchIncidents() {
                 const li = document.createElement('li');
                 li.innerHTML = `
                     <strong>Reporter Name:</strong> ${incident.reporter_name}<br>
-                    <span class="incident-details"><strong>Details:</strong> ${incident.incident_details.substring(0, 100)}...</span><br>
-                    <strong>Reported Time:</strong> ${incident.incident_reported_datetime}<br>
-                    <strong>Priority:</strong> ${incident.priority}<br>
-                    <strong>Status:</strong> ${incident.status}<br>
+                    <form class="edit-incident-form" data-incident-id="${incident.id}">
+                        <div class="form-group">
+                            <label for="incident_details_${incident.id}">Details:</label>
+                            <textarea id="incident_details_${incident.id}" name="incident_details">${incident.incident_details}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="status_${incident.id}">Status:</label>
+                            <select id="status_${incident.id}" name="status">
+                                <option value="Open" ${incident.status === 'Open' ? 'selected' : ''}>Open</option>
+                                <option value="In progress" ${incident.status === 'In progress' ? 'selected' : ''}>In progress</option>
+                                <option value="Closed" ${incident.status === 'Closed' ? 'selected' : ''}>Closed</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="priority_${incident.id}">Priority:</label>
+                            <select id="priority_${incident.id}" name="priority">
+                                <option value="High" ${incident.priority === 'High' ? 'selected' : ''}>High</option>
+                                <option value="Medium" ${incident.priority === 'Medium' ? 'selected' : ''}>Medium</option>
+                                <option value="Low" ${incident.priority === 'Low' ? 'selected' : ''}>Low</option>
+                            </select>
+                        </div>
+                        <button type="submit">Update</button>
+                        <div class="update-message" id="updateMessage_${incident.id}"></div>
+                    </form>
+                    <hr>
                 `;
                 ul.appendChild(li);
             });
             incidentsListDiv.appendChild(ul);
+            attachUpdateListeners(); // Attach event listeners after rendering the forms
         } else {
             const p = document.createElement('p');
             p.classList.add('no-incidents');
@@ -49,6 +72,79 @@ function fetchIncidents() {
         p.textContent = 'Failed to load incidents.';
         incidentsListDiv.appendChild(p);
     });
+}
+
+function attachUpdateListeners() {
+    const editForms = document.querySelectorAll('.edit-incident-form');
+    editForms.forEach(form => {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const incidentId = this.dataset.incidentId;
+            const formData = new FormData(this);
+            const data = {
+                incident_details: formData.get('incident_details'),
+                status: formData.get('status'),
+                priority: formData.get('priority')
+            };
+            const accessToken = localStorage.getItem('accessToken');
+            const updateMessageDiv = document.getElementById(`updateMessage_${incidentId}`);
+            updateMessageDiv.textContent = 'Updating...';
+            updateMessageDiv.className = '';
+
+            fetch(`/api/incidents/${incidentId}/`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`,
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(errorData => {
+                        let errors = '';
+                        for (const key in errorData) {
+                            errors += `${key}: ${errorData[key].join(', ')}<br>`;
+                        }
+                        updateMessageDiv.innerHTML = `Update failed:<br>${errors}`;
+                        updateMessageDiv.className = 'error';
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(updatedIncident => {
+                updateMessageDiv.textContent = `Incident ${incidentId} updated successfully.`;
+                updateMessageDiv.className = 'success';
+                // Optionally, update the displayed data without a full refresh
+                const liElement = this.closest('li');
+                liElement.querySelector('.incident-details').innerHTML = `<strong>Details:</strong> ${updatedIncident.incident_details.substring(0, 100)}...`;
+                liElement.querySelector('select[name="status"]').value = updatedIncident.status;
+                liElement.querySelector('select[name="priority"]').value = updatedIncident.priority;
+            })
+            .catch(error => {
+                console.error('Error updating incident:', error);
+                updateMessageDiv.textContent = 'Failed to update incident. Please try again.';
+                updateMessageDiv.className = 'error';
+            });
+        });
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            let cookie = cookies[i].trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = cookie.substring(name.length + 1);
+                break;
+            }
+        }
+    }
+    return cookieValue;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
