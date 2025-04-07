@@ -10,15 +10,6 @@ class IncidentListCreateAPIView(generics.ListCreateAPIView):
         return Incident.objects.filter(created_by=self.request.user)
 
     def perform_create(self, serializer):
-        print(self.request.user.first_name)
-        print(self.request.user.last_name)
-        print(self.request.user.address)
-        print(self.request.user.city)
-        print(self.request.user.state)
-
-
-
-
         serializer.save(created_by=self.request.user,
                         reporter_name=self.request.user.first_name,
                         reporter_email=self.request.user.email,

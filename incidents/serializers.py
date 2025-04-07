@@ -4,9 +4,6 @@ from .models import Incident
 
 class IncidentSerializer(serializers.ModelSerializer):
     created_by = serializers.ReadOnlyField(source='created_by.username')
-    # Note: reporter_name, reporter_email, reporter_phone are implicitly included with fields = '__all__'
-    # and will use the model's default behavior (which is NOT required=False).
-    # If you want to explicitly make them not required in the serializer:
     reporter_name = serializers.CharField(max_length=255, required=False)
     reporter_email = serializers.EmailField(required=False)
     reporter_phone = serializers.CharField(max_length=20, required=False)

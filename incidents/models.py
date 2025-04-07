@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 import random
 import string
+from users.models import User
 from django.conf import settings
 
 
@@ -44,7 +45,7 @@ class Incident(models.Model):
     incident_reported_datetime = models.DateTimeField(default=timezone.now)
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default=MEDIUM)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=OPEN)
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.incident_id
