@@ -28,10 +28,10 @@ class IncidentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
 
 class IncidentSearchAPIView(generics.ListAPIView):
     serializer_class = IncidentSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
         incident_id = self.request.query_params.get('incident_id', None)
         if incident_id:
-            return Incident.objects.filter(created_by=self.request.user, incident_id=incident_id)
+            return Incident.objects.filter(incident_id=incident_id)
         return Incident.objects.none()
