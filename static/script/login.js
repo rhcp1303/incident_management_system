@@ -35,7 +35,6 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(responseData => {
             if (responseData.message === 'Login successful') {
-                alert("hello")
                 messageDiv.textContent = 'Login successful!';
                 messageDiv.className = 'success';
                 localStorage.setItem('accessToken', responseData.access);
@@ -43,8 +42,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.location.href = '/static/html/create_incident.html';
                 console.log('Login successful:', responseData);
             } else if (responseData.error) {
-                                alert("hello")
-
                 messageDiv.textContent = `Login failed: ${responseData.error}`;
                 messageDiv.className = 'error';
                 console.error('Login failed:', responseData.error);

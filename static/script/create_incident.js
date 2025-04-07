@@ -18,8 +18,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const tokenExpiry = localStorage.getItem('tokenExpiry');
 
     if (!accessToken || !tokenExpiry || Date.now() >= parseInt(tokenExpiry)) {
-        alert(accessToken)
-        alert(tokenExpiry)
         localStorage.removeItem('accessToken');
         localStorage.removeItem('tokenExpiry');
         window.location.href = '/static/html/login.html';
