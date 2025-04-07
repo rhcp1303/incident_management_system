@@ -2,8 +2,12 @@ from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import RegistrationSerializer, UserSerializer
-from django.contrib.auth.hashers import  check_password
+from django.contrib.auth.hashers import check_password
 from .models import User
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.conf import settings
+from datetime import datetime, timezone
+
 
 class RegistrationAPIView(generics.GenericAPIView):
     serializer_class = RegistrationSerializer
@@ -25,11 +29,20 @@ class LoginAPIView(generics.GenericAPIView):
         email = request.data.get('email')
         password = request.data.get('password')
         user = User.objects.get(email=email)
-        if check_password(password,user.password):
-            return Response({"message": "Login successful"}, status=status.HTTP_200_OK)
+        if check_password(password, user.password):
+            refresh = RefreshToken.for_user(user)
+            access_token_lifetime = settings.SIMPLE_JWT.get('ACCESS_TOKEN_LIFETIME')
+            expiry_timestamp = int(
+                (datetime.now(timezone.utc) + access_token_lifetime).timestamp() * 1000)
+            print(expiry_timestamp)
 
+            return Response({
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+                'expiry': expiry_timestamp,
+                "message": "Login successful"
+            }, status=status.HTTP_200_OK)
         else:
-            print("no")
             return Response({"error": "Invalid Credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
