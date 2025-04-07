@@ -25,12 +25,13 @@ function fetchIncidents() {
             data.forEach(incident => {
                 const li = document.createElement('li');
                 li.dataset.originalIncident = JSON.stringify(incident);
+                const isClosed = incident.status === 'Closed';
                 li.innerHTML = `
                     <strong>Reporter Name:</strong> ${incident.reporter_name}<br>
                     <form class="edit-incident-form" data-incident-id="${incident.id}">
                         <div class="form-group">
                             <label for="incident_details_${incident.id}">Details:</label>
-                            <textarea id="incident_details_${incident.id}" name="incident_details">${incident.incident_details}</textarea>
+                            <textarea id="incident_details_${incident.id}" name="incident_details" ${isClosed ? 'readonly' : ''}>${incident.incident_details}</textarea>
                         </div>
                         <div class="form-group">
                             <label for="status_${incident.id}">Status:</label>
@@ -42,13 +43,13 @@ function fetchIncidents() {
                         </div>
                         <div class="form-group">
                             <label for="priority_${incident.id}">Priority:</label>
-                            <select id="priority_${incident.id}" name="priority">
+                            <select id="priority_${incident.id}" name="priority" ${isClosed ? 'disabled' : ''}>
                                 <option value="High" ${incident.priority === 'High' ? 'selected' : ''}>High</option>
                                 <option value="Medium" ${incident.priority === 'Medium' ? 'selected' : ''}>Medium</option>
                                 <option value="Low" ${incident.priority === 'Low' ? 'selected' : ''}>Low</option>
                             </select>
                         </div>
-                        <button type="submit">Update</button>
+                        <button type="submit" ${isClosed ? 'disabled' : ''}>Update</button>
                         <div class="update-message" id="updateMessage_${incident.id}"></div>
                     </form>
                     <hr>
@@ -120,9 +121,14 @@ function attachUpdateListeners() {
                 updateMessageDiv.textContent = `Incident ${incidentId} updated successfully.`;
                 updateMessageDiv.className = 'success';
                 liElement.dataset.originalIncident = JSON.stringify(updatedIncident);
-//                liElement.querySelector('.incident-details').innerHTML = `<strong>Details:</strong> ${updatedIncident.incident_details.substring(0, 100)}...`;
-                liElement.querySelector('select[name="status"]').value = updatedIncident.status;
-                liElement.querySelector('select[name="priority"]').value = updatedIncident.priority;
+                const isClosed = updatedIncident.status === 'Closed';
+                const detailsTextarea = liElement.querySelector(`#incident_details_${incidentId}`);
+                const prioritySelect = liElement.querySelector(`#priority_${incidentId}`);
+                const updateButton = liElement.querySelector('button[type="submit"]');
+
+                if (detailsTextarea) detailsTextarea.readOnly = isClosed;
+                if (prioritySelect) prioritySelect.disabled = isClosed;
+                if (updateButton) updateButton.disabled = isClosed;
             })
             .catch(error => {
                 console.error('Error updating incident:', error);
